@@ -1,14 +1,16 @@
-/**
- * Load and Display 
- * 
- * Images can be loaded and displayed to the screen at their actual size
- * or any other size. 
- */
- 
-PImage d_map;  // Declare variable "a" of type PImage
+//CERES (Commodity Engagement in Rural Economic Sectors) 
+//Interactive Data Map
+
+PImage d_map;  // Map image
+PImage logo; //logo
 PFont fontA;
 
+int x = 0;
+int y = 0;
+
 color mouseOverColor;
+
+String hover[] = new String[375000];
 
 //Crops
 String crop1 = "Maize";
@@ -24,7 +26,6 @@ PImage crop_img4;
 PImage crop_img5;
 
 //Crop Prices
-
 int price1;
 int price2;
 int price3;
@@ -34,63 +35,27 @@ int price5;
 //Crop Price Arrays by Dept
 String [][]prices = new String[17][6];
 
-
-
-//Dept Colors for Hover Detection
-
-// Processing - JAVA
-//color d1 = #4a7e1c;
-//color d2 = #19551c;
-//color d3 = #228005;
-//color d4 = #168824;
-//color d5 = #278a17;
-//color d6 = #538007;
-//color d7 = #83c800;
-//color d8 = #64830a;
-//color d9 = #77ff00;
-//color d10 = #107b1b;
-//color d11 = #6d8109;
-//color d12 = #6f9900;
-//color d13 = #5ea400;
-//color d14 = #3d5a04;
-//color d15 = #2b7206;
-//color d16 = #85e700;
-//color d17 = #c5ff00;
-
-// Processing.js
-color d1 = "-12157649";
-color d2 = "-15641307";
-color d3 = "-15630554";
-color d4 = "-16742346";
-color d5 = "-15300304";
-color d6 = "-11501784";
-color d7 = "-8468672";
-color d8 = "-10321366";
-color d9 = "-9830829";
-color d10 = "-16745683";
-color d11 = "-9666519";
-color d12 = "-9660369";
-color d13 = "-10968270";
-color d14 = "-12887526";
-color d15 = "-14454238";
-color d16 = "-8526261";
-color d17 = "-4063660";
-
-
 void setup() {
   size(750, 500);
-  //colorMode(RGB, 100);
-  // The file "jelly.jpg" must be in the data folder
-  // of the current sketch to load successfully
-  d_map     = loadImage("data/nicaragua_dept_map2.png");  // Load the image into the program 
-  crop_img1 = loadImage("data/crop1.png");
-  crop_img2 = loadImage("data/crop2.png");
-  crop_img3 = loadImage("data/crop3.png");
-  crop_img4 = loadImage("data/crop4.png");
-  crop_img5 = loadImage("data/crop5.png");
-  fontA     =  loadFont("data/Swiss721BT-Bold-48.vlw");
+  logo = loadImage("logo.png"); //load logo
+  d_map = loadImage("nicaragua_dept_map2.png");  // Load map
+  crop_img1 = loadImage("crop1.png"); //load crop icons
+  crop_img2 = loadImage("crop2.png"); 
+  crop_img3 = loadImage("crop3.png");
+  crop_img4 = loadImage("crop4.png");
+  crop_img5 = loadImage("crop5.png");
+  fontA = loadFont("Swiss721BT-Bold-48.vlw");
   textFont(fontA, 20);
   
+  for (int i = 0; i <375000; i++)
+  {
+    hover[i] = "0";
+  }
+  
+  String a[] = loadStrings("hover_map.txt");
+  arrayCopy(a, hover);
+ 
+  //dept names
   prices[0][0] = "Boaco";
   prices[1][0] = "Carazo";
   prices[2][0] = "Chinandega";
@@ -109,21 +74,21 @@ void setup() {
   prices[15][0] = "Region Autonoma del Atlantico Norte";
   prices[16][0] = "Region Autonoma del Atlantico Sur";
   
-  
   for (int j = 0; j < 17; j++)
   {
     for (int i = 1; i < 6; i++)
     {
       int randomN = int(random(0, 200));
       prices[j][i] = ""+randomN;
-      print(prices[j][i]);
     }
   }
+  
 }
 
 void draw() {
   // Displays the image at its actual size at point (0,0)
   image(d_map, 0, 0); 
+  image(logo, 15, 15);
   //crop images
   
   image(crop_img1, width-92, 20);
@@ -134,6 +99,7 @@ void draw() {
   
   textAlign(RIGHT);
   fill(#2c2c2c);
+  
   //currency markers
   for (int i = 0; i < 5; i++)
   {
@@ -141,13 +107,16 @@ void draw() {
   }
   
   fill(#FFFFFF);
-  
-  //Ugly-ass code but works this shit should probably be a function
   textAlign(LEFT);
-  mouseOverColor = get(mouseX, mouseY);
-  println("mouseOverColor: " + mouseOverColor); 
+  
+  x = mouseX;
+  y = mouseY;
+  
+  int a = x+(y*width);
 
-  if (mouseOverColor == d1)
+  //Following code should be made into a function call
+  
+  if (hover[x+(y*width)].equals("1"))
   {
     text(prices[0][0], 50, height-50);
     fill(#2c2c2c);
@@ -159,7 +128,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d2)
+  if (hover[x+(y*width)].equals("2"))
   {
     text(prices[1][0], 50, height-50);
     fill(#2c2c2c);
@@ -171,7 +140,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d3)
+  if (hover[x+(y*width)].equals("3"))
   {
     text(prices[2][0], 50, height-50);
     fill(#2c2c2c);
@@ -183,7 +152,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d4)
+  if (hover[x+(y*width)].equals("4"))
   {
     text(prices[3][0], 50, height-50);
 
@@ -196,7 +165,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d5)
+  if (hover[x+(y*width)].equals("5"))
   {
     text(prices[4][0], 50, height-50);
     fill(#2c2c2c);
@@ -208,7 +177,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d6)
+  if (hover[x+(y*width)].equals("6"))
   {
     text(prices[5][0], 50, height-50);
     fill(#2c2c2c);
@@ -220,7 +189,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d7)
+  if (hover[x+(y*width)].equals("7"))
   {
     text(prices[6][0], 50, height-50);
     fill(#2c2c2c);
@@ -232,7 +201,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d8)
+  if (hover[x+(y*width)].equals("8"))
   {
     text(prices[7][0], 50, height-50);
     fill(#2c2c2c);
@@ -244,7 +213,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d9)
+  if (hover[x+(y*width)].equals("9"))
   {
     text(prices[8][0], 50, height-50);
     fill(#2c2c2c);
@@ -256,7 +225,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d10)
+  if (hover[x+(y*width)].equals("10"))
   {
     text(prices[9][0], 50, height-50);
     fill(#2c2c2c);
@@ -268,7 +237,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d11)
+  if (hover[x+(y*width)].equals("11"))
   {
     text(prices[10][0], 50, height-50);
     fill(#2c2c2c);
@@ -280,7 +249,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d12)
+  if (hover[x+(y*width)].equals("12"))
   {
     text(prices[11][0], 50, height-50);
     fill(#2c2c2c);
@@ -292,7 +261,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d13)
+  if (hover[x+(y*width)].equals("13"))
   {
     text(prices[12][0], 50, height-50);
     fill(#2c2c2c);
@@ -304,7 +273,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d14)
+  if (hover[x+(y*width)].equals("14"))
   {
     text(prices[13][0], 50, height-50);
     fill(#2c2c2c);
@@ -316,7 +285,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d15)
+  if (hover[x+(y*width)].equals("15"))
   {
     text(prices[14][0], 50, height-50);
     fill(#2c2c2c);
@@ -328,7 +297,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d16)
+  if (hover[x+(y*width)].equals("16"))
   {
     text(prices[15][0], 50, height-50);
     fill(#2c2c2c);
@@ -340,7 +309,7 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  if (mouseOverColor == d17)
+  if (hover[x+(y*width)].equals("17"))
   {
     text(prices[16][0], 50, height-50);
     fill(#2c2c2c);
@@ -352,17 +321,15 @@ void draw() {
     }
     fill(#FFFFFF);
   }
-  
 }
 
 void barGraphs(int price, int q)
 { 
-  //price bar graph vis
+  //price bar graph visualization
   int xBar = width-92;
   noStroke();
   q--;
-
-  fill(#ffea00, price);
+  fill(#ffb400, price+50);
   quad(xBar, 20+(q*92), xBar, 75+(q*92), xBar-price, 75+(q*92), xBar-price, 20+(q*92));
   fill(#2c2c2c);
 }
